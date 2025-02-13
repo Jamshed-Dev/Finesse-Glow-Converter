@@ -12,7 +12,7 @@ function App() {
   const [fontSize, setFontSize] = useState(20);
   const [backgroundColor, setBackgroundColor] = useState("#FFFFFF");
   const [cropRatio, setCropRatio] = useState("none");
-  const [outputFormat, setOutputFormat] = useState("jpeg");
+  const [outputFormat, setOutputFormat] = useState("png");
   const [processedImages, setProcessedImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null); // State to control modal
   const [logoPosition, setLogoPosition] = useState({ x: 0.5, y: 0.9 }); // Store as percentages (0-1)
@@ -25,10 +25,10 @@ function App() {
     const [removeBackground, setRemoveBackground] = useState(false);
   const [logoSource, setLogoSource] = useState('upload'); // 'upload', 'preset1', 'preset2', 'preset3', 'preset4'
   const presetLogos = [
-    '/logo1.png',
-    '/logo2.png',
-    '/logo3.png',
-    '/logo4.png' // Added fourth preset logo
+    '/public/logo1.png',
+    '/public/logo2.png',
+    '/public/logo3.png',
+    '/public/logo4.png' // Added fourth preset logo
   ];
   const [logoRotation, setLogoRotation] = useState(0); // New state for logo rotation
 
@@ -42,6 +42,7 @@ function App() {
     const [removeExif, setRemoveExif] = useState(false); // State for EXIF removal option
     const [tileTextWatermarkEnabled, setTileTextWatermarkEnabled] = useState(false); // State for tile text watermark
     const [tileWatermarkText, setTileWatermarkText] = useState("Watermark Text"); // State for tile watermark text
+    const [tileLogoEnabled, setTileLogoEnabled] = useState(false); // New state for tile logo
 
 
   // State Variables
@@ -225,17 +226,42 @@ const addLogoAndWatermark = (ctx, newWidth, newHeight, currentImage, resolve) =>
             const logoX = Math.max(0, Math.min((newWidth * logoPosition.x - logoWidth / 2), newWidth - logoWidth));
             const logoY = Math.max(0, Math.min((newHeight * logoPosition.y - logoHeight / 2), newHeight - logoHeight));
 
-            // Rotate the logo
-            ctx.save(); // Save the current context state
-            ctx.translate(logoX + logoWidth / 2, logoY + logoHeight / 2); // Translate to the center of the logo
-            ctx.rotate(logoRotation * Math.PI / 180); // Rotate
-            ctx.translate(-(logoX + logoWidth / 2), -(logoY + logoHeight / 2)); // Translate back
 
-            ctx.globalAlpha = logoOpacity / 100;
-            ctx.drawImage(logoImg, logoX, logoY, logoWidth, logoHeight);
-            ctx.globalAlpha = 1;
+            if (tileLogoEnabled) {
+                const logoSpacingX = logoWidth * 1.5; // Example spacing, adjust as needed
+                const logoSpacingY = logoHeight * 1.5; // Example spacing, adjust as needed
 
-            ctx.restore(); // Restore the context to its original state
+                ctx.globalAlpha = logoOpacity / 100; // Apply opacity for tiled logos
+
+                for (let x = 0; x < newWidth; x += logoSpacingX) {
+                    for (let y = 0; y < newHeight; y += logoSpacingY) {
+                        // Rotate the logo
+                        ctx.save(); // Save the current context state
+                        ctx.translate(x + logoWidth / 2, y + logoHeight / 2); // Translate to the center of the logo
+                        ctx.rotate(logoRotation * Math.PI / 180); // Rotate
+                        ctx.translate(-(x + logoWidth / 2), -(y + logoHeight / 2)); // Translate back
+
+                        ctx.drawImage(logoImg, x, y, logoWidth, logoHeight);
+
+                        ctx.restore(); // Restore the context to its original state
+                    }
+                }
+                ctx.globalAlpha = 1; // Reset opacity
+            } else {
+                // Rotate the logo
+                ctx.save(); // Save the current context state
+                ctx.translate(logoX + logoWidth / 2, logoY + logoHeight / 2); // Translate to the center of the logo
+                ctx.rotate(logoRotation * Math.PI / 180); // Rotate
+                ctx.translate(-(logoX + logoWidth / 2), -(logoY + logoHeight / 2)); // Translate back
+
+                ctx.globalAlpha = logoOpacity / 100;
+                ctx.drawImage(logoImg, logoX, logoY, logoWidth, logoHeight);
+                ctx.globalAlpha = 1;
+
+                ctx.restore(); // Restore the context to its original state
+            }
+
+
             addTextWatermark(ctx, newWidth, newHeight, currentImage, resolve); // Pass currentImage
         };
 
@@ -296,10 +322,10 @@ const addLogoAndWatermark = (ctx, newWidth, newHeight, currentImage, resolve) =>
     }
 
 
-    // Quality only affects JPEG/WebP
+    // Quality only affects JPEG/WebP/AVIF
     const mimeType = `image/${outputFormat}`;
     const qualityValueToUse =
-      outputFormat === "jpeg" || outputFormat === "webp" || outputFormat === "avif" // ADD avif
+      outputFormat === "jpeg" || outputFormat === "webp" || outputFormat === "avif"
         ? qualityValue / 100
         : undefined; // Pass undefined for PNG, which doesn't use quality
 
@@ -309,7 +335,16 @@ const addLogoAndWatermark = (ctx, newWidth, newHeight, currentImage, resolve) =>
     if (removeExif) { // Apply EXIF removal for all formats if checked
         EXIF.getData(currentImage, function() { // Use currentImage File object
             EXIF.getAllTags(this);
-            EXIF.deleteAllTags(this); // Delete all EXIF tags
+            // EXIF.deleteAllTags(this); // Incorrect function!
+
+            // Correct way to remove EXIF tags:
+            const tags = EXIF.getAllTags(this);
+            for (const tag in tags) {
+                if (tags.hasOwnProperty(tag)) {
+                    delete this.tags[tag]; // Delete each tag individually
+                }
+            }
+
 
             // Re-render the canvas to data URL after EXIF removal - important to use the *same* canvas
             dataURL = ctx.canvas.toDataURL(mimeType, qualityValueToUse);
@@ -456,7 +491,7 @@ const LogoPreview = () => { //RENAME TO WatermarkPreview
       logoSrc = presetLogos[presetIndex];
   }
 
-  if (!logoSrc && !textWatermark && !(tileTextWatermarkEnabled && tileWatermarkText)) return null;
+  if (!logoSrc && !textWatermark && !(tileTextWatermarkEnabled && tileWatermarkText) && !tileLogoEnabled) return null; // ADD tileLogoEnabled condition
 
     const previewCanvasRef = useRef(null); // Ref for preview canvas
 
@@ -495,10 +530,51 @@ const LogoPreview = () => { //RENAME TO WatermarkPreview
     const logoWidth = logoScale; // Use percentage for width
     const logoHeight = logoScale;
 
+    // Logo Preview for Tiled Logos
+    useEffect(() => {
+        if (!previewImageRef.current || !previewCanvasRef.current || !tileLogoEnabled || !logoSrc) return;
+
+        const img = previewImageRef.current;
+        const logoPreviewCanvas = previewCanvasRef.current;
+        const logoPreviewCtx = logoPreviewCanvas.getContext('2d');
+        const logoImgForPreview = new Image();
+        logoImgForPreview.src = logoSrc;
+
+        logoImgForPreview.onload = () => {
+            logoPreviewCanvas.width = img.naturalWidth;
+            logoPreviewCanvas.height = img.naturalHeight;
+            logoPreviewCtx.clearRect(0, 0, logoPreviewCanvas.width, logoPreviewCanvas.height); // Clear canvas
+
+            const logoAspectRatio = logoImgForPreview.width / logoImgForPreview.height;
+            let logoPreviewWidth = (logoPreviewCanvas.width * logoScale) / 100;
+            let logoPreviewHeight = logoPreviewWidth / logoAspectRatio;
+            const logoSpacingX = logoPreviewWidth * 1.5;
+            const logoSpacingY = logoPreviewHeight * 1.5;
+
+            logoPreviewCtx.globalAlpha = logoOpacity / 100; // Apply opacity
+
+            for (let x = 0; x < logoPreviewCanvas.width; x += logoSpacingX) {
+                for (let y = 0; y < logoPreviewCanvas.height; y += logoSpacingY) {
+                    // Rotate the logo
+                    logoPreviewCtx.save(); // Save context
+                    logoPreviewCtx.translate(x + logoPreviewWidth / 2, y + logoPreviewHeight / 2); // Translate to logo center
+                    logoPreviewCtx.rotate(logoRotation * Math.PI / 180); // Rotate
+                    logoPreviewCtx.translate(-(x + logoPreviewWidth / 2), -(y + logoPreviewHeight / 2)); // Translate back
+
+                    logoPreviewCtx.drawImage(logoImgForPreview, x, y, logoPreviewWidth, logoPreviewHeight);
+                    logoPreviewCtx.restore(); // Restore context
+                }
+            }
+            logoPreviewCtx.globalAlpha = 1; // Reset opacity
+        };
+
+
+    }, [tileLogoEnabled, logoSrc, logoScale, logoOpacity, logoRotation, previewImage]);
+
 
     return (
         <>
-        {logoSrc && (
+        {logoSrc && !tileLogoEnabled && ( // Conditionally render single logo preview
             <div
                 className="logo-preview"
                 style={{
@@ -513,6 +589,23 @@ const LogoPreview = () => { //RENAME TO WatermarkPreview
                 }}
             >
                 <img src={logoSrc} alt="Logo Preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            </div>
+        )}
+
+        {tileLogoEnabled && logoSrc && ( // Render canvas for tiled logo preview
+            <div
+                className="tile-logo-preview"
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    pointerEvents: 'none',
+                    overflow: 'hidden' // Clip any overflow
+                }}
+            >
+                <canvas ref={previewCanvasRef} style={{maxWidth: '100%', maxHeight: '100%'}}/>
             </div>
         )}
 
@@ -617,7 +710,7 @@ const LogoPreview = () => { //RENAME TO WatermarkPreview
                 className="image-preview1"
               />
               <div className="image-actions">
-                <button className="remove-image-button" onClick={() => removeImage(index)}>❌</button>
+                <button className="remove-image-button" onClick={() => removeImage(index)}>Remove</button>
               </div>
             </div>
           ))}
@@ -637,7 +730,7 @@ const LogoPreview = () => { //RENAME TO WatermarkPreview
             />
              <LogoPreview />
             {/* Visual Indicator for Logo Position */}
-            {logo && (
+            {logo && !tileLogoEnabled && ( //Conditionally render indicator for single logo only
               <div
                 className="logo-indicator"
                 style={{
@@ -665,6 +758,18 @@ const LogoPreview = () => { //RENAME TO WatermarkPreview
           <button onClick={() => handlePresetLogoSelect('preset4')}>Preset 4</button> {/* Added fourth preset button */}
       </div>
     </div>
+
+          {/* Tile Logo Watermark Option */}
+          <div>
+        <label>
+          Tile Logo:
+          <input
+            type="checkbox"
+            checked={tileLogoEnabled}
+            onChange={(e) => setTileLogoEnabled(e.target.checked)}
+          />
+        </label>
+      </div>
 
       {/* Logo Settings */}
       <div>
@@ -715,7 +820,7 @@ const LogoPreview = () => { //RENAME TO WatermarkPreview
        {/* Quality Settings */}
        <div>
         <div className="range-container">
-          <label>Quality (JPEG/WebP/AVIF):</label>
+          <label>Quality (JPEG/WebP):</label>
           <input
             type="range"
             min="0"
@@ -864,7 +969,7 @@ const LogoPreview = () => { //RENAME TO WatermarkPreview
             <option value="16:9">16:9</option>
             <option value="4:3">4:3</option>
             <option value="1:1">1:1</option>
-            <option value="nocropimage">nocropimage</option>
+            <option value="nocropimage">1:1 without image cropping</option>
           </select>
         </label>
       </div>
@@ -884,7 +989,7 @@ const LogoPreview = () => { //RENAME TO WatermarkPreview
       {/* Remove EXIF Data Toggle */}
       <div>
         <label>
-          Remove EXIF Data (JPEG/WebP/PNG):
+          Remove EXIF Data (JPEG/WebP/PNG/AVIF):
           <input
             type="checkbox"
             checked={removeExif}
@@ -906,7 +1011,7 @@ const LogoPreview = () => { //RENAME TO WatermarkPreview
                 alt={outputName}
                 className="preview-image"
               />
-               <button className="remove-preview-button" onClick={(event) => handleRemoveProcessedImage(event, index)}>❌</button>
+               <button className="remove-preview-button" onClick={(event) => handleRemoveProcessedImage(event, index)}>Remove</button>
             </div>
           ))
         ) : (

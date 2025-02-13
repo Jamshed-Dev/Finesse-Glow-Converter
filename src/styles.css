@@ -7,6 +7,9 @@ body {
   background-color: #f0f0f0;
   color: #333;
   transition: background-color 0.3s, color 0.3s;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .App {
@@ -17,6 +20,7 @@ body {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s, box-shadow 0.3s;
+  flex-grow: 1;
 }
 
 .dark-mode {
@@ -28,6 +32,33 @@ body {
   background-color: #1e1e1e;
   box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
 }
+
+/* Footer Styles */
+footer {
+  background-color: #f0f0f0;
+  color: #666;
+  text-align: center;
+  padding: 10px 0;
+  margin-top: 20px;
+  font-size: 0.9em; /* Reduced font size to match image */
+}
+
+.dark-mode footer {
+  background-color: #1e1e1e;
+  color: #aaa;
+}
+
+footer a {
+  /* color: blue; Removed blue color */
+  text-decoration: none; /* Removed underline */
+  color: inherit; /* Inherit color from parent (footer) */
+}
+
+footer a:hover {
+  /* color: darkblue; Removed darker blue on hover */
+  color: inherit; /* Inherit color on hover as well */
+}
+
 
 /* Input and Label Styles */
 label {
@@ -183,9 +214,13 @@ button:hover {
 .modal-content {
   background-color: #fff;
   border-radius: 8px;
-  max-width: 90%;
-  max-height: 90%;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 95%;
+  max-height: 95%;
+  overflow: auto;
   position: relative;
 }
 
@@ -194,12 +229,14 @@ button:hover {
 }
 
 .modal-image {
+  display: block;
   width: auto;
   height: auto;
-  max-width: 100%;
-  max-height: 100%;
-  display: block;
+  max-width: 95vw;
+  max-height: 95vh;
+  object-fit: contain;
 }
+
 
 .close-button {
   position: absolute;
@@ -332,12 +369,14 @@ height: 40px; /* Adjust height */
 border: 1px solid #555; /* Dark border */
 border-radius: 6px; /* Rounded corners */
 padding: 2px 5px;
+width: revert-layer;
 }
 
 .dark-mode input[type="color"] {
 background-color: #333;
 color: #fff;
 border-color: #777;
+width: revert-layer;
 }
 
 /* Preset Watermark Positions Buttons */
