@@ -1,0 +1,437 @@
+/* Global Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #f0f0f0;
+  color: #333;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.App {
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.dark-mode {
+  background-color: #121212;
+  color: #fff;
+}
+
+.dark-mode .App {
+  background-color: #1e1e1e;
+  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+}
+
+/* Input and Label Styles */
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="color"],
+input[type="file"],
+select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+.dark-mode input[type="text"],
+.dark-mode input[type="number"],
+.dark-mode input[type="color"],
+.dark-mode input[type="file"],
+.dark-mode select {
+  background-color: #333;
+  color: #fff;
+  border-color: #555;
+}
+
+input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+/* Button Styles */
+button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Drop Zone Styles */
+.drop-zone {
+  border: 2px dashed #ddd;
+  border-radius: 4px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+  transition: border-color 0.3s;
+}
+
+.drop-zone:hover {
+  border-color: #007bff;
+}
+
+.dark-mode .drop-zone {
+  border-color: #555;
+}
+
+/* Image List and Preview Styles */
+.image-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.image-item {
+  position: relative;
+  width: 100px; /* Adjust as needed */
+  height: 100px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.image-preview1 {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-actions {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: flex; /* Use flexbox to align button */
+  justify-content: flex-end; /* Align button to the right */
+}
+
+.image-actions cloce {
+  cursor: pointer;
+  color: white;
+  font-size: 16px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  padding: 2px 6px;
+}
+
+/* Preview Container Styles */
+.preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.image-preview {
+  width: 100px; /* Adjust as needed */
+  height: 100px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative; /* Make position relative for button positioning */
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.no-images {
+  text-align: center;
+  width: 100%;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 8px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow: hidden;
+  position: relative;
+}
+
+.dark-mode .modal-content {
+  background-color: #1e1e1e;
+}
+
+.modal-image {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  color: #333;
+  cursor: pointer;
+}
+
+.dark-mode .close-button {
+  color: #fff;
+}
+
+/* Range Input Styles */
+.range-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Spacing between slider and value */
+    margin-bottom: 15px;
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  background: #ddd;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+input[type="range"]:hover {
+  opacity: 1;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.4); /* Added shadow */
+
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.4); /* Added shadow */
+}
+
+/* Dark Mode Range Input */
+.dark-mode input[type="range"] {
+  background: #555;
+}
+
+.dark-mode input[type="range"]::-webkit-slider-thumb {
+  background: #007bff;
+    box-shadow: 0 2px 4px rgba(255,255,255,0.4); /* Added shadow */
+
+}
+
+.dark-mode input[type="range"]::-moz-range-thumb {
+  background: #007bff;
+  box-shadow: 0 2px 4px rgba(255,255,255,0.4); /* Added shadow */
+
+}
+
+.range-value {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+/* Interactive Preview Styles */
+.interactive-preview {
+  position: relative; /* Needed for absolute positioning of the indicator */
+  max-width: 500px; /* Or whatever size you want */
+  margin-bottom: 20px;
+}
+
+.interactive-preview .preview-image.interactive {
+  cursor: crosshair; /* Change cursor on hover */
+  width: 100%; /* Make image responsive within its container */
+  height: auto;
+  display: block; /* Remove extra space below image */
+}
+
+.logo-indicator {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #007bff;
+  border-radius: 50%;
+  pointer-events: none; /*  pass clicks through to the image */
+  opacity: 0.7;
+  box-sizing: border-box;
+
+}
+
+/* Preset Logo Buttons */
+.preset-logo-buttons {
+margin-bottom: 15px;
+}
+
+.preset-logo-buttons button {
+margin-right: 10px;
+margin-bottom: 5px; /* Add some spacing below the buttons */
+padding: 8px 12px; /* Adjust padding for better appearance */
+background-color: #007bff; /* Match the blue color */
+color: white;
+border: none;
+border-radius: 5px; /* More rounded corners */
+cursor: pointer;
+transition: background-color 0.3s ease;
+}
+.preset-logo-buttons button:hover{
+background-color: #0056b3;
+}
+
+/* Background Color Input */
+input[type="color"] {
+height: 40px; /* Adjust height */
+border: 1px solid #555; /* Dark border */
+border-radius: 6px; /* Rounded corners */
+padding: 2px 5px;
+}
+
+.dark-mode input[type="color"] {
+background-color: #333;
+color: #fff;
+border-color: #777;
+}
+
+/* Preset Watermark Positions Buttons */
+.preset-watermark-positions {
+margin-bottom: 20px;
+}
+
+.preset-watermark-positions button {
+margin-right: 10px;
+margin-bottom: 5px;
+padding: 8px 12px;
+background-color: #f0f0f0; /* Light grey background */
+color: #333; /* Dark text */
+border: 1px solid #ddd; /* Light border */
+border-radius: 4px;
+cursor: pointer;
+transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.dark-mode .preset-watermark-positions button {
+background-color: #333; /* Dark background in dark mode */
+color: #fff; /* White text in dark mode */
+border-color: #555; /* Darker border in dark mode */
+}
+
+.preset-watermark-positions button:hover {
+background-color: #e0e0e0; /* Slightly darker grey on hover */
+border-color: #ccc; /* Darker border on hover */
+}
+
+.dark-mode .preset-watermark-positions button:hover {
+background-color: #444; /* Slightly lighter dark background on hover */
+border-color: #666; /* Lighter dark border on hover */
+}
+
+
+/* Draggable Text Watermark Preview */
+.text-watermark-preview {
+    position: absolute;
+    cursor: grab;
+    user-select: none;
+}
+
+/* Improved Image Remove Button Style */
+.remove-image-button, .remove-preview-button {
+    background-color: rgba(220, 53, 69, 0.8); /* Reddish background */
+    color: white;
+    border: none;
+    border-radius: 5px; /* Rounded corners */
+    padding: 8px 10px; /* Padding to make it larger */
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+     font-weight: bold; /* Make text bold */
+}
+
+.remove-image-button:hover, .remove-preview-button:hover {
+    opacity: 1; /* Fully opaque on hover */
+}
+
+/* Style for remove button in preview images */
+.remove-preview-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+     padding: 6px 8px; /* Slightly smaller padding for preview buttons */
+     font-size: 0.7em; /* Slightly smaller font for preview buttons */
+}
+
+.tile-text-watermark-preview {
+    overflow: hidden; /* Clip content to bounds */
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-wrap: wrap; /* Allow text to wrap */
+    line-height: 1.5; /* Adjust line height as needed */
+    pointer-events: none; /* Ensure it doesn't interfere with image interactions */
+}
+
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .App {
+    padding: 10px;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="color"],
+  input[type="file"],
+  select {
+    width: 100%;
+  }
+    .interactive-preview {
+    max-width: 100%; /* Full width on smaller screens */
+  }
+}
