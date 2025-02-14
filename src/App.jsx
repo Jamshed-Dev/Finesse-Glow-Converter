@@ -25,10 +25,10 @@ function App() {
     const [removeBackground, setRemoveBackground] = useState(false);
   const [logoSource, setLogoSource] = useState('upload'); // 'upload', 'preset1', 'preset2', 'preset3', 'preset4'
   const presetLogos = [
-    '/image/logo1.png',
-    '/image/logo2.png',
-    '/image/logo3.png',
-    '/image/logo4.png' // Added fourth preset logo
+    '/img/logo1.png',
+    '/img/logo2.png',
+    '/img/logo3.png',
+    '/img/logo4.png' // Added fourth preset logo
   ];
   const [logoRotation, setLogoRotation] = useState(0); // New state for logo rotation
 
