@@ -1,4 +1,4 @@
-/* Add to existing styles.css */
+/* Add to existing styles */
 
 .video-controls {
   margin: 20px 0;
@@ -43,4 +43,28 @@
 
 .dark-mode .video-preview {
   box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+}
+
+.download-button {
+  display: block;
+  margin: 20px auto;
+  padding: 12px 24px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #218838;
+}
+
+.dark-mode .download-button {
+  background-color: #2ea44f;
+}
+
+.dark-mode .download-button:hover {
+  background-color: #2c974b;
 }
