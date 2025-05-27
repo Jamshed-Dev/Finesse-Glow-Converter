@@ -8,7 +8,7 @@ import axios from 'axios';
 import * as EXIF from 'exif-js';
 
 function App() {
-  // ... (previous state variables remain the same)
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isVideo, setIsVideo] = useState(false);
   const [videoFile, setVideoFile] = useState(null);
   const [videoPreview, setVideoPreview] = useState(null);
