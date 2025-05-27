@@ -15,6 +15,7 @@ function App() {
   const [videoResolution, setVideoResolution] = useState("original");
   const [videoFilter, setVideoFilter] = useState("none");
   const [videoFormat, setVideoFormat] = useState("mp4");
+  const [images, setImages] = useState([]);
   const ffmpegRef = useRef(new FFmpeg());
   const [isFFmpegLoaded, setIsFFmpegLoaded] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -39,6 +40,26 @@ function App() {
 
   const handleFileSelect = async (e) => {
     const files = Array.from(e.target.files);
+    const mediaFiles = files.filter(file => 
+      file.type.startsWith("image/") || file.type.startsWith("video/")
+    );
+
+    if (mediaFiles.length > 0) {
+      const file = mediaFiles[0];
+      if (file.type.startsWith("video/")) {
+        setIsVideo(true);
+        setVideoFile(file);
+        setVideoPreview(URL.createObjectURL(file));
+      } else {
+        setIsVideo(false);
+        setImages([...images, ...mediaFiles]);
+      }
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files);
     const mediaFiles = files.filter(file => 
       file.type.startsWith("image/") || file.type.startsWith("video/")
     );
@@ -130,8 +151,6 @@ function App() {
       setIsProcessing(false);
     }
   };
-
-  // ... (previous functions remain the same)
 
   return (
     <div className={`App ${isDarkMode ? "dark-mode" : ""}`}>
